@@ -1,3 +1,12 @@
 .virt
 optuna_hyper.txt
 rf-rainfall_v*.py
+model-explain.txt
+
+# folder
+kotakinabalu
+kuantan
+kuching
+lawas
+mulu
+valid
