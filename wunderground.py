@@ -35,10 +35,10 @@ location = {
     'kuching': 'WBGG:9:MY'
 }
 
-location_name = 'kuching'
+location_name = 'mulu'
 
 url = f'https://api.weather.com/v1/location/{location[location_name]}/observations/historical.json?apiKey=e1f10a1e78da46f5b10a1e78da96f525&units=e'
-start_date = datetime.strptime('20100101','%Y%m%d')
+start_date = datetime.strptime('20200101','%Y%m%d')
 end_date = datetime.strptime('20220717','%Y%m%d')
 print(f"{location_name}/{location_name}_{start_date.strftime('%Y%m%d')}-{end_date.strftime('%Y%m%d')}")
 
@@ -88,4 +88,4 @@ while iterate_date <= end_date:
 weathers_data['Time'] = weathers_data['Time'].apply(lambda x: unix_to_datetime(x, 8))
 
 # weathers_data.to_csv(f"{location_name}/{location_name}_{start_date.strftime('%Y%m%d')}-{end_date.strftime('%Y%m%d')}.csv", index=False)
-weathers_data.to_csv(f"{location_name}/{location_name}-rainfall-feature-wunderground.csv", index=False)
+weathers_data.to_csv(f"{location_name}/rainfall-feature-wunderground.csv", index=False)
