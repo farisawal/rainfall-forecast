@@ -2,6 +2,7 @@ import requests
 from datetime import date, datetime, timezone, timedelta
 import pandas as pd
 import json
+import os
 
 '''
 to retrieve the weather detail from this api
@@ -14,8 +15,7 @@ format on url variable
 PLEASE CHANGES THIS VARIABLES VALUE:
 start_date - start date of the data
 end_date - end date of the data
-url - change for different place/location
-location_name - for naming the csv file based on format {location_name}_{start_date}-{end_date}.csv
+location_name - the location of intended data located, but please define its location id in 'location' dictionary
 
 '''
 
@@ -26,21 +26,44 @@ lawas: https://api.weather.com/v1/location/WBGW:9:MY/observations/historical.jso
 
 kuching: https://api.weather.com/v1/location/WBGG:9:MY/observations/historical.json?apiKey=e1f10a1e78da46f5b10a1e78da96f525&units=e
 
+subang: https://api.weather.com/v1/location/WMSA:9:MY/observations/historical.json?apiKey=e1f10a1e78da46f5b10a1e78da96f525&units=e
 
 '''
 
 location = {
-    'mulu': 'WBMU:9:MY',
-    'lawas': 'WBGW:9:MY',
-    'kuching': 'WBGG:9:MY'
+    # 'mulu': 'WBMU:9:MY', miri
+    # 'lawas': 'WBGW:9:MY', labuan
+    # SARAWAK
+    'kuching': 'WBGG:9:MY',
+    'miri': 'WBGR:9:MY',
+    'sibu': 'WBGS:9:MY',
+    # SABAH
+    'kotakinabalu': 'WBKK:9:MY',
+    'sandakan': 'WBKS:9:MY',
+    # SEMENANJUNG
+    'subang': 'WMSA:9:MY',
+    'kuantan': 'WMKD:9:MY',
+    'bayanlepas': 'WMKP:9:MY',
+    'senai': 'WMKJ:9:MY',
+    'kotabharu': 'WMKC:9:MY',
+    # WILAYAH
+    'labuan': 'WBKL:9:MY',
+    'klia': 'WMKK:9:MY',
+    
 }
 
-location_name = 'mulu'
+location_name = 'subang'
+start_date = datetime.strptime('20240101','%Y%m%d')
+end_date = datetime.strptime('20240101','%Y%m%d')
+
+if not os.path.exists(location_name):
+    os.makedirs(location_name)
+
+datapath = f"{location_name}/rainfall-feature-wunderground.csv"
 
 url = f'https://api.weather.com/v1/location/{location[location_name]}/observations/historical.json?apiKey=e1f10a1e78da46f5b10a1e78da96f525&units=e'
-start_date = datetime.strptime('20200101','%Y%m%d')
-end_date = datetime.strptime('20220717','%Y%m%d')
-print(f"{location_name}/{location_name}_{start_date.strftime('%Y%m%d')}-{end_date.strftime('%Y%m%d')}")
+
+print(f"\n{datapath}")
 
 def weather_details(weather_dict):
     observations = weather_dict['observations']
@@ -87,5 +110,7 @@ while iterate_date <= end_date:
 
 weathers_data['Time'] = weathers_data['Time'].apply(lambda x: unix_to_datetime(x, 8))
 
-# weathers_data.to_csv(f"{location_name}/{location_name}_{start_date.strftime('%Y%m%d')}-{end_date.strftime('%Y%m%d')}.csv", index=False)
-weathers_data.to_csv(f"{location_name}/rainfall-feature-wunderground.csv", index=False)
+# # weathers_data.to_csv(f"{location_name}/{location_name}_{start_date.strftime('%Y%m%d')}-{end_date.strftime('%Y%m%d')}.csv", index=False)
+
+weathers_data.to_csv(datapath, index=False)
+print(f"Successfully saved the data into {datapath}")
