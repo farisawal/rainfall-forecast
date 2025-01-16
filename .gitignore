@@ -1,11 +1,13 @@
 .virt
-optuna_hyper.txt
 rf-rainfall_v*.py
-model-explain.txt
 setup_gpu.py
-original_input.csv
-input_data.csv
+*.txt
+!oni.txt
+*.csv
+
 # folder
+lawas
+mulu
 kuching
 miri
 sibu
@@ -19,5 +21,4 @@ kotabharu
 labuan
 klia
 valid
-lawas
-mulu
+bakelalan
