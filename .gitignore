@@ -3,9 +3,11 @@ rf-rainfall_v*.py
 setup_gpu.py
 *.txt
 !oni.txt
+!requirements.txt
 *.csv
+*.xls
 
-# folder
+# data folder
 lawas
 mulu
 kuching
