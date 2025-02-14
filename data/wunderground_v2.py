@@ -5,6 +5,28 @@ import json
 import os
 import argparse
 
+LOCATION = {
+    # SARAWAK
+    'mulu': 'WBMU:9:MY', # miri
+    'lawas': 'WBGW:9:MY', # labuan
+    'kuching': 'WBGG:9:MY',
+    'miri': 'WBGR:9:MY',
+    'sibu': 'WBGS:9:MY',
+    'bintulu': 'WBGB:9:MY',
+    # SABAH
+    'kotakinabalu': 'WBKK:9:MY',
+    'sandakan': 'WBKS:9:MY',
+    # SEMENANJUNG
+    'subang': 'WMSA:9:MY',
+    'kuantan': 'WMKD:9:MY',
+    'bayanlepas': 'WMKP:9:MY',
+    'senai': 'WMKJ:9:MY',
+    'kotabharu': 'WMKC:9:MY',
+    # WILAYAH
+    'labuan': 'WBKL:9:MY',
+    'klia': 'WMKK:9:MY',    
+}
+
 def parse_date(date_str):
     try:
         return datetime.strptime(date_str, '%Y%m%d')
@@ -13,11 +35,7 @@ def parse_date(date_str):
 
 def setup_parser():
     parser = argparse.ArgumentParser(description='Retrieve historical weather data for Malaysian locations')
-    parser.add_argument('location', choices=[
-        'mulu', 'lawas', 'kuching', 'miri', 'sibu',
-        'kotakinabalu', 'sandakan', 'subang', 'kuantan',
-        'bayanlepas', 'senai', 'kotabharu', 'labuan', 'klia'
-    ], help='Location name to retrieve weather data for')
+    parser.add_argument('location', choices=list(LOCATION.keys()), help='Location name to retrieve weather data for')
     parser.add_argument('--start-date', type=parse_date, required=True,
                         help='Start date in YYYYMMDD format')
     parser.add_argument('--end-date', type=parse_date, required=True,
@@ -49,39 +67,22 @@ def unix_to_datetime(unix_timestamp, timezone_offset):
     return timezone_aware_datetime
 
 def main():
-    location = {
-        # SARAWAK
-        'mulu': 'WBMU:9:MY', # miri
-        'lawas': 'WBGW:9:MY', # labuan
-        'kuching': 'WBGG:9:MY',
-        'miri': 'WBGR:9:MY',
-        'sibu': 'WBGS:9:MY',
-        # SABAH
-        'kotakinabalu': 'WBKK:9:MY',
-        'sandakan': 'WBKS:9:MY',
-        # SEMENANJUNG
-        'subang': 'WMSA:9:MY',
-        'kuantan': 'WMKD:9:MY',
-        'bayanlepas': 'WMKP:9:MY',
-        'senai': 'WMKJ:9:MY',
-        'kotabharu': 'WMKC:9:MY',
-        # WILAYAH
-        'labuan': 'WBKL:9:MY',
-        'klia': 'WMKK:9:MY',    
-    }
-
     parser = setup_parser()
     args = parser.parse_args()
 
     if args.start_date > args.end_date:
         parser.error("End date must be after start date")
 
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     output_dir = args.output_dir or args.location
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    full_output_dir = os.path.join(project_root, 'data', output_dir)
+    
+    # create the output directory if it doesn't exist
+    os.makedirs(full_output_dir, exist_ok=True)
 
-    datapath = f"{output_dir}/rainfall-feature-wunderground.csv"
-    url = f'https://api.weather.com/v1/location/{location[args.location]}/observations/historical.json?apiKey=e1f10a1e78da46f5b10a1e78da96f525&units=e'
+    
+    datapath = os.path.join(full_output_dir, 'rainfall-feature-wunderground.csv')
+    url = f'https://api.weather.com/v1/location/{LOCATION[args.location]}/observations/historical.json?apiKey=e1f10a1e78da46f5b10a1e78da96f525&units=e'
 
     print(f"\nRetrieving weather data for {args.location}")
     print(f"Output path: {datapath}")
